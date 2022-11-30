@@ -53,15 +53,12 @@ jobs:
   test_api:
     # needs: dockerhub_update
     runs-on: ubuntu-latest
+    container:
+      image: ${{secrets.DOCKER_USER}}/devops-kpi:latest
+      ports:
+        - 4000:4000
+      options: --cpus 1
     steps:
-    - name: Run the image in a container
-      uses: addnab/docker-run-action@v3
-      with:
-        image: ${{secrets.DOCKER_USER}}/devops-kpi:latest
-        run: |
-          echo "runing the docker image"
-          echo "Testing the nodejs  app endpoints"
-          echo ${{ steps.docker_build.outputs }}
     - name: Call API
       uses: indiesdev/curl@v1.1
       id: api
