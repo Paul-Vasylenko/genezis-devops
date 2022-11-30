@@ -35,23 +35,23 @@ jobs:
   #   - uses: actions/checkout@v3
   #   - name: Build docker image
   #     run: docker build -t ${{secrets.DOCKER_USER}}/devops-kpi:latest .
-  dockerhub_update:
-    # needs: docker_build
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    - name: Build docker image
-      run: docker build -t ${{secrets.DOCKER_USER}}/devops-kpi:latest .
-    - name: Login to docker hub
-      env:
-        DOCKER_USER: ${{secrets.DOCKER_USER}}
-        DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
-      run: |
-        docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-    - name: Push to docker hub
-      run: docker push ${{secrets.DOCKER_USER}}/devops-kpi:latest
+  # dockerhub_update:
+  #   # needs: docker_build
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - uses: actions/checkout@v3
+  #   - name: Build docker image
+  #     run: docker build -t ${{secrets.DOCKER_USER}}/devops-kpi:latest .
+  #   - name: Login to docker hub
+  #     env:
+  #       DOCKER_USER: ${{secrets.DOCKER_USER}}
+  #       DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+  #     run: |
+  #       docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+  #   - name: Push to docker hub
+  #     run: docker push ${{secrets.DOCKER_USER}}/devops-kpi:latest
   test_api:
-    needs: dockerhub_update
+    # needs: dockerhub_update
     runs-on: ubuntu-latest
     steps:
     - name: Run the image in a container
@@ -61,6 +61,7 @@ jobs:
         run: |
           echo "runing the docker image"
           echo "Testing the nodejs  app endpoints"
+          echo ${{ steps.docker_build.outputs }}
     - name: Call API
       uses: indiesdev/curl@v1.1
       id: api
