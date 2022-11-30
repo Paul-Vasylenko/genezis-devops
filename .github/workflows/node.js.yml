@@ -7,36 +7,36 @@ on:
     branches: [ "master" ]
 
 jobs:
-  linting:
-    runs-on: ubuntu-latest
+  # linting:
+  #   runs-on: ubuntu-latest
 
-    steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
-      with:
-        node-version: 16
-        cache: npm
-    - name: Cache dependencies
-      id: cache
-      uses: actions/cache@v3
-      with:
-        path: ./node_modules
-        key: modules-${{ hashFiles('package-lock.json') }}
-    - name: Install dependencies
-      if: steps.cache.outputs.cache-hit != 'true'
-      run: npm ci
-    - name: Run eslint 🐱‍💻
-      run: npm run lint:check
-  docker_build:
-    needs: linting
-    runs-on: ubuntu-latest
+  #   steps:
+  #   - uses: actions/checkout@v3
+  #   - uses: actions/setup-node@v3
+  #     with:
+  #       node-version: 16
+  #       cache: npm
+  #   - name: Cache dependencies
+  #     id: cache
+  #     uses: actions/cache@v3
+  #     with:
+  #       path: ./node_modules
+  #       key: modules-${{ hashFiles('package-lock.json') }}
+  #   - name: Install dependencies
+  #     if: steps.cache.outputs.cache-hit != 'true'
+  #     run: npm ci
+  #   - name: Run eslint 🐱‍💻
+  #     run: npm run lint:check
+  # docker_build:
+  #   needs: linting
+  #   runs-on: ubuntu-latest
 
-    steps:
-    - uses: actions/checkout@v3
-    - name: Build docker image
-      run: docker build -t ${{secrets.DOCKER_USER}}/devops-kpi:latest .
+  #   steps:
+  #   - uses: actions/checkout@v3
+  #   - name: Build docker image
+  #     run: docker build -t ${{secrets.DOCKER_USER}}/devops-kpi:latest .
   dockerhub_update:
-    needs: docker_build
+    # needs: docker_build
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -57,6 +57,7 @@ jobs:
       image: paul1408/devops-kpi:latest
       ports:
         - 80:4000
+      options: --user 1001
     steps:
     - uses: actions/checkout@v3
     - name: Call API
