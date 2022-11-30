@@ -58,7 +58,7 @@ jobs:
     - name: Pull docker image
       run: docker pull ${{secrets.DOCKER_USER}}/devops-kpi
     - name: Run docker container
-      run: docker run --rm --memory="64M" --cpus="1.5" -p 80:4000 --name devops-kpi-container ${{secrets.DOCKER_PASSWORD}}/devops-kpi:latest
+      run: docker run --rm --memory="64M" --cpus="1.5" -p 80:4000 --name devops-kpi-container ${{secrets.DOCKER_USER}}/devops-kpi:latest
     - name: Call API
       uses: indiesdev/curl@v1.1
       id: api
