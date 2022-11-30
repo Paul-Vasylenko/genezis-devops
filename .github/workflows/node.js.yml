@@ -53,12 +53,11 @@ jobs:
   test_api:
     needs: dockerhub_update
     runs-on: ubuntu-latest
+    services:
+      api:
+        image: ${{secrets.DOCKER_USER}}/devops-kpi
     steps:
     - uses: actions/checkout@v3
-    - name: Pull docker image
-      run: docker pull ${{secrets.DOCKER_USER}}/devops-kpi
-    - name: Run docker container
-      run: docker run --rm --memory="64M" --cpus="1.5" -p 80:4000 --name devops-kpi-container ${{secrets.DOCKER_USER}}/devops-kpi:latest
     - name: Call API
       uses: indiesdev/curl@v1.1
       id: api
