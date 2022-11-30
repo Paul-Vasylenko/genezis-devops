@@ -53,9 +53,10 @@ jobs:
   test_api:
     needs: dockerhub_update
     runs-on: ubuntu-latest
-    services:
-      api:
-        image: ${{secrets.DOCKER_USER}}/devops-kpi
+    container:
+      image: ${{secrets.DOCKER_USER}}/devops-kpi:latest
+      ports:
+        - 80:4000
     steps:
     - uses: actions/checkout@v3
     - name: Call API
