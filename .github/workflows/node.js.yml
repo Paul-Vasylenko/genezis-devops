@@ -50,3 +50,23 @@ jobs:
         docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
     - name: Push to docker hub
       run: docker push ${{secrets.DOCKER_USER}}/devops-kpi:latest
+  test_api:
+    needs: dockerhub_update
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Pull docker image
+      run: docker pull ${{secrets.DOCKER_PASSWORD}}/devops-kpi
+    - name: Run docker container
+      run: docker run --rm --memory="64M" --cpus="1.5" -p 80:4000 --name devops-kpi-container ${{secrets.DOCKER_PASSWORD}}/devops-kpi:latest
+    - name: Call API
+      uses: indiesdev/curl@v1.1
+      id: api
+      with:
+        url: http://localhost:80/
+        method: "GET"
+        accept: 200
+        log-response: true
+    - name: Check api OK status
+      if: steps.api.outputs.response.status != '200'
+      run: exit 1
