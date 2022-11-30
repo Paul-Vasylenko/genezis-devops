@@ -54,7 +54,7 @@ jobs:
     # needs: dockerhub_update
     runs-on: ubuntu-latest
     container:
-      image: ${{secrets.DOCKER_USER}}/devops-kpi:latest
+      image: paul1408/devops-kpi:latest
       ports:
         - 4000:4000
       options: --cpus 1
