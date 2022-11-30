@@ -7,67 +7,46 @@ on:
     branches: [ "master" ]
 
 jobs:
-  # linting:
-  #   runs-on: ubuntu-latest
-
-  #   steps:
-  #   - uses: actions/checkout@v3
-  #   - uses: actions/setup-node@v3
-  #     with:
-  #       node-version: 16
-  #       cache: npm
-  #   - name: Cache dependencies
-  #     id: cache
-  #     uses: actions/cache@v3
-  #     with:
-  #       path: ./node_modules
-  #       key: modules-${{ hashFiles('package-lock.json') }}
-  #   - name: Install dependencies
-  #     if: steps.cache.outputs.cache-hit != 'true'
-  #     run: npm ci
-  #   - name: Run eslint 🐱‍💻
-  #     run: npm run lint:check
-  # docker_build:
-  #   needs: linting
-  #   runs-on: ubuntu-latest
-
-  #   steps:
-  #   - uses: actions/checkout@v3
-  #   - name: Build docker image
-  #     run: docker build -t ${{secrets.DOCKER_USER}}/devops-kpi:latest .
-  # dockerhub_update:
-  #   # needs: docker_build
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - uses: actions/checkout@v3
-  #   - name: Build docker image
-  #     run: docker build -t ${{secrets.DOCKER_USER}}/devops-kpi:latest .
-  #   - name: Login to docker hub
-  #     env:
-  #       DOCKER_USER: ${{secrets.DOCKER_USER}}
-  #       DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
-  #     run: |
-  #       docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-  #   - name: Push to docker hub
-  #     run: docker push ${{secrets.DOCKER_USER}}/devops-kpi:latest
-  test_api:
-    # needs: dockerhub_update
+  linting:
     runs-on: ubuntu-latest
-    container:
-      image: paul1408/devops-kpi:latest
-      ports:
-        - 4000:4000
-      options: --cpus 1
+
     steps:
-    - name: Call API
-      uses: indiesdev/curl@v1.1
-      id: api
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
       with:
-        url: http://localhost:4000
-        method: "GET"
-        accept: 200
-        log-response: true
-        retries: 10
-    - name: Check api OK status
-      if: steps.api.outputs.response.status != '200'
-      run: exit 1
+        node-version: 16
+        cache: npm
+    - name: Cache dependencies
+      id: cache
+      uses: actions/cache@v3
+      with:
+        path: ./node_modules
+        key: modules-${{ hashFiles('package-lock.json') }}
+    - name: Install dependencies
+      if: steps.cache.outputs.cache-hit != 'true'
+      run: npm ci
+    - name: Run eslint 🐱‍💻
+      run: npm run lint:check
+  docker_build:
+    needs: linting
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build docker image
+      run: docker build -t ${{secrets.DOCKER_USER}}/devops-kpi:latest .
+  dockerhub_update:
+    needs: docker_build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build docker image
+      run: docker build -t ${{secrets.DOCKER_USER}}/devops-kpi:latest .
+    - name: Login to docker hub
+      env:
+        DOCKER_USER: ${{secrets.DOCKER_USER}}
+        DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+      run: |
+        docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+    - name: Push to docker hub
+      run: docker push ${{secrets.DOCKER_USER}}/devops-kpi:latest
