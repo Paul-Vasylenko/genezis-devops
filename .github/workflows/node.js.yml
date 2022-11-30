@@ -27,3 +27,11 @@ jobs:
       run: npm ci
     - name: Run eslint 🐱‍💻
       run: npm run lint:check
+  docker_build:
+    needs: linting
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build docker image
+      run: docker build -t devops-kpi .
