@@ -70,6 +70,7 @@ jobs:
         method: "GET"
         accept: 200
         log-response: true
+        retries: 10
     - name: Check api OK status
       if: steps.api.outputs.response.status != '200'
       run: exit 1
