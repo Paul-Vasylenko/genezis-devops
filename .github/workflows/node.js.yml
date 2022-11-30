@@ -63,7 +63,7 @@ jobs:
       uses: indiesdev/curl@v1.1
       id: api
       with:
-        url: docker:4000
+        url: localhost:4000
         method: "GET"
         accept: 200
         log-response: true
